@@ -1,0 +1,22 @@
+
+Padrao de arquivos do terraform
+    arquivo.tf
+    arquivo-terraform-crair-altomatico.tfstate
+    valor-das-variaveis.tfvars
+
+comandos
+    terraform init
+    terraform validate
+         
+    terraform plan
+    terraform plan -out=plan.out(nome do arquivo)
+    terraform apply
+    terraform apply -help
+    terraform apply plan.out
+    terraform destroy
+    terraform fmt (format)
+    terraform Output nome_do_output
+    terraform Output (lista Outputs)
+
+
+

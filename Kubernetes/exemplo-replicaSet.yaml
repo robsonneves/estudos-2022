@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: frontend-rs
+  labels:
+    app: frontend
+spec:
+  template:                ## daqui 
+    metadata:
+      name: nginx
+      labels:
+        env: production
+        #app: nginx
+        #tier: frontend
+    spec:
+      containers:
+        - name: nginx
+          image: nginx     ## até aqui igual as configurações do POD
+  selector:
+    matchLabel:
+      env: production
+  replicas: 2
+    

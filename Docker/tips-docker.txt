@@ -1,0 +1,457 @@
+
+================= Docker =================
+
+docker ps
+docker version
+
+Rodar conteiner
+    docker run
+    docker run docker/whalesay cowsay Hello_world
+    comando --- nome da imagem -- mensagem de retorno
+
+================= Rodando um Conteiner =================
+
+Imagens oficiais do Docker
+    https://hub.docker.com
+
+Rodar imagem.
+    docker run nome-da-imagem
+    docker run ubuntux
+    docker run -it ubuntu (rodar e abrir um terminal)
+
+Verificar quais conteiners foram executados ou ainda estao executando
+    docker ps -a 
+
+    docker run -it node
+    
+Rodar conteiner em background
+    docker run nginx
+    docker stop nome-do-conteiner
+    docker run -d nginx
+
+Expor porta no Docker
+    -p 80:80; exemplo exemplo a porta 80
+    primeira porta que exponho no meu pc e a segunda que recebo do docker
+    docker run -d -p 80:80 nginx
+
+    docker stop id-ou-nome 
+
+Reiniciar um conteiner 
+    docker start nome-ou-id-conteiner
+
+Definir nome do conteiner
+    --name 
+    docker run -d -p 80:80 --name nginx_app nginx
+
+Logs
+    docker logs id-ou-nome-conteiner
+    docker logs -f id-ou-nome-conteiner
+
+Remover conteiner do ps -abrir
+    docker rm id-ou-name-conteriner
+    docker rm id-ou-name-conteriner -f (faz o force e remove o conteiner)
+
+
+================= Criando imagens =================
+
+Cria o arquivo Dockerfile
+Builda a imagem
+    docker build . (dentro do diretorio do arquivo dockerfile)
+    docker image ls (listar iamgens)
+    docker run id-da-imagem (roda a imagem no docker)
+    docker run -d -p 3000:3000 id-da-imagem
+
+Quando alterar uma imagem tem que refazer o build
+Baixar imagens 
+    docker pull nome-da-imagem
+
+HELP comandos
+    --help 
+    ex: docker run --help 
+
+Alterar o nome da imagem 
+    docker tag nome-imagem-ou-id novo-nome-da-imagem
+    docker tag nome-da-imagem:minha-tag
+
+Ao criar imagem criar com nome e tag    
+    docker build -t nome-iamgem:tag-da-imagem .
+
+Reiniciar conteiner 
+    docker run -d -p 3000:3000 nome-imagem
+    docker stop
+    docker start nome-imagem
+    docker start -i nome-imagem 
+
+Deletar imagens 
+    docker rmi nome-ou-id-imagem
+    docker rmi -f nome-ou-id-imagem (force)
+
+Remover imagens conteiners que ñ estao sendo ultilizados
+    docker system prune
+
+
+================= Comandos do Conteiner =================
+
+Remover conteiners apos a utilizacao
+    docker run --rm nome-do-conteiner
+
+Copiar arquivos entre conteiners
+    docker cp 
+    docker cp nome-do-conteiner:cominho-do-arquico.js ./lugar/copia/
+
+Verificar os processamentos do conteiner    
+    docker top nome-do-conteiner
+
+Inspecionar o conteiner    
+    docker ps
+    docker inspect nome-do-conteiner
+
+Verificar o processamento do conteiner
+    docker stats
+
+
+================= DockerHub =================
+
+Fazer login no dockerHub
+    docker login
+
+Fazer logout
+    docker logout
+
+Enviar imagem pro dockerchub
+    docker push nome-da-imagem
+
+Atualizar imagem no dockerHub, alterar a tag quando criar a imagem depois envia pro hub
+
+
+================= Volumes  =================
+================= Volumes  =================
+
+
+Tipos de Volumes (sao ultilizados para persistir dados)
+    Anonimos    -> criado com a tag -v, nome aleatorio mais indicados para testes
+    Nomeados    -> criado com nome no volume, facil de ultilizalo 
+    Bind Mounts -> Salvar os dados localmente.
+
+Volune anonimo
+    docker run -v /data
+    docker run -d -p 80:80 --name phpmessagens_conteiner --rm -v /data phpmessages
+    
+    listar volumes 
+        docker volume ls
+
+Volune Nomeados
+    docker run -v nomeDoVolume:/data
+    docker -d -p 80:80 --name phpmessagens_conteiner -v phpvolume:/var/wwww/html/messages -rm phpmessagens 
+
+Volume Bind Mounts (maquina host) atualiza projeto em tempo real
+    docker run /dir/data:/data
+    docker -d -p 80:80 --name phpmessagens_conteiner -v c:/documentes:/var/wwww/html/messages -rm phpmessagens_conteiner
+
+
+================= Comandos do Volumes  =================
+
+Criar volume
+    docker volume create nome-do-volume
+
+Listar volume
+    docker volume ls
+
+Volume help
+    docker volume --help
+
+Inspecionar volume
+    docker volume inspect nome-volume
+
+Remover volumes
+    docker volume rm nome-do-volume
+    
+Remover volumes ñ ultilizados
+    docker volume prune
+
+Volume somente leitura 
+    docker run -v volume:/data:ro
+
+
+================= Redes / Networks  =================
+================= Redes / Networks  =================
+
+Comunicacao entre conteiners
+
+Tipos de conexao
+    Externa
+    Com host
+    Entre conteiners (usa driver dridge)
+
+Tipo de rede (Drivers)
+    Bridge
+    host
+    macvlan
+    none
+    plugins
+
+Listando Redes
+    docker network ls
+
+Criar rede
+    network create nome-rede
+    docker network create nome-rede
+    docker network create -d tipo-rede(macvlan) nome-rede
+
+Remover rede
+    docker network rm nome-da-rede
+
+Remover rede em massa
+    docker network prune
+
+# Conexao Externa          - configura o arquivo Dockerfile
+# Conexao host             - configura o arquivo Dockerfile
+# Conexao entre conteiners - configura o arquivo Dockerfile
+
+Conectar um conteiner em uma rede
+    docker network connect nome-rede nome-conteiner
+
+Desconectar um conteiner de uma rede
+    docker network disconnect nome-rede nome-conteiner
+
+Inspecionar resdes 
+    docker network inspect nome-da-rede
+
+
+================= YAML =================
+================= YAML =================
+
+Linguagem de SERIALIZACAO / linguagem de marcacao
+Comentario no yaml adicionar no inicio #
+
+
+================= Docker Compose =================
+================= Docker Compose =================
+
+Gerencia muiltiplos builds
+Instalar o composer caso esteja no LINUX.
+Exemplo de arquivo docker-composer.yaml
+comandos para subir o arquivo.
+
+subir docker-compose.yaml
+    docker-compose up
+
+parar o terminal
+    ctrl+c 
+
+verificar conteiners rodando
+    docker ps 
+
+Composer rodando em backlog
+    flag -d
+    docker-compose up -d 
+
+Parando o composer
+    docker compose down
+    docker-compose down
+
+Variaveis de ambiente com compose, isso se faz no arquivo docker-compose.yaml
+    env_file
+    ${VARIAVEL}
+
+Redes no composer adicionar no arquivo docker-composer.yaml
+Build da imagem no compose
+Bind Mount no compose
+Verificando servicos compose
+    docker-compose ps
+
+
+================= Kubernates =================
+================= Kubernates =================
+
+
+Orquestrador de conteiners
+Nodes = maquinas
+Escalar o projeto atravez de CLUSTER
+
+# Control Plane  - maquina que controla as outras  
+# Nodes          - maquinas gerenciadas pelo CONTROL PLANE
+# Deployment     - execulta uma imagem ou projeto em um POD
+# POD            - ter um ou mais conteiners em um NODE
+# Services       - servico que expoe o POD ao mundo 
+# Kubectl        - cliente de linha de comando para o KUBERNATES 
+
+Dependencias nescessarias 
+    - Kubectl
+    - minikube
+
+================= minikube =================
+
+Iniciando o minikube
+    minikube start --driver=(nome-do-driver)
+    minikube start --driver=docker
+    minikube status
+
+Parar o minikube
+     minikube stop
+
+Dashboard do minikube
+    minikube dashboard
+    minikube dashboard --url
+
+Deployment
+    Aula 158
+
+Criar Deploy 
+    docker build -t diretorio-dockerhub/nome-da-imagem
+    docker run -d -p 5000:5000 --name flask-kub --rm robsonneves/flask-kub-projeto
+    docker login
+        add user
+        add password
+    docker push robsonneves/flask-kub-projeto
+
+    minikube start
+    kubectl create deployment nome-imagem --image=robsonneves/flask-kub-projeto (nome-do-projeto-dockerhub)
+
+Delete deployment
+    kubectl delete deployment deployment_name
+
+Comandos port
+     lsof -i tcp:5000 
+     kill -9 <PID>
+
+Checando o deploy 
+    kubectl get deployments
+    kubectl describe deployments
+
+Checando pods 
+    kubectl get pods
+    kubectl describe pods
+
+Restart deploy 
+    kubectl rollout restart deployment <deployment name>
+
+Configuracoes do Kubernates
+    kubectl config view
+
+Criar Services ( mais comun LoadBalancer )
+    kubectl expose deployment nome-service --type=tipo-do-servico --port=3000
+    kubectl expose deployment flask-deployment --type=LoadBalancer --port=5000
+
+Gerando ip de acesso / abre um view na console
+    minikube service <nome-do-servico-criado>
+
+Detalhes do servico
+    kubectl get services 
+    kubectl describe services/nome-do-service 
+
+# Escalando a aplicacao
+    kubectl scale deployment/nome-do-deployment --replicas=4(numero-de-replicas)
+    kubectl get pods
+    minikube dashboard
+
+Verificando numero de replicas
+    kubectl get rs 
+
+Diminuir numero de replicas/pods
+    kubectl scale deployment/nome-do-deployment --replicas=2(numero-de-replicas-menor)
+
+Atualizando a imagem 
+    docker build -t nome-da-imagem:tag .
+    docker push nome-da-imagem:tag
+
+    Vai nos conteiners e pega o maneger
+    kubectl set imagem deployment/nome-imagem nome-conteiner=nova-imagem
+    kube set image deployment/kube-deployment2 flask-kub-projeto=robsonneves/fask-kub-projeto:v2
+
+Desfazer alteracao do projeto / ROOLBACK
+    kubectl rollout status deployment/nome-do-deployment
+    kubectl rollout undo deployment/nome-do-deployment(nome da imagem)
+
+Deletar servico 
+    kubectl delete service nome-do-servico
+
+Deletar Deployment
+    kubectl delete deployment nome-do-deployment
+
+
+================= Modo declarativo Kubernates (criar .yaml) =================
+
+chaves mais ultilizadas 
+    apiVersion  = numero da versao
+    Kind        = tipo do arquivo
+    metadata    = descrever algum OBJ com a chave name. 
+    replicas    = numero de replicas / PODs
+    conteiners  = definir especificacoes do conteiner (nome, imagem etc.)
+
+Deploy declarado
+    kubectl apply -f ./flask.yaml nome-do-arquivo
+Parar deploy declarado
+    kubectl delete -f nome-do-arquivo
+
+Criar Services declarativo rodar    
+    kubectl apply -f ./flask-service.yaml  nome-do-arquivo
+    kubectl get services
+    minikube service flask-service (abre no navegador)
+
+Parar o servico
+    kubectl delete -f nome-do-servico 
+
+Atualizar imagem, declarativo
+    trocar a tag direto no arquivo e subir com o comando apply
+    kubectl apply -f flask.yaml 
+
+Unindo os arquivos separados por ---
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

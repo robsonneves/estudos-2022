@@ -1,0 +1,93 @@
+
+================= Kafka =================
+
+Topico -> cada um tem suas particoes (offset chave de marcacao) fica na sequencia.
+Comsumer -> se as mensagens na sequencia mas isso pode ser configurado.
+Produtores -> Producer guarda as mensagens caso caia, e retoma as atividades automaticamente
+Consumer Groups -> balanceia a leitura de topicos
+
+
+kafka-topics.sh
+
+https://medium.com/@Ankitthakur/apache-kafka-installation-on-mac-using-homebrew-a367cdefd273
+
+/opt/homebrew/etc/kafka/server.properties
+
+
+================= subir local via terminal =================
+
+Comandos para subir o KAFKA (cada comando em um terminal)
+
+zookeeper-server-start /opt/homebrew/etc/kafka/zookeeper.properties
+kafka-server-start /opt/homebrew/etc/kafka/server.properties
+kafka-topics --create --topic test-topic --bootstrap-server localhost:9092 --replication-factor 1 --partitions 4
+
+
+================= subir docker =================
+
+docker-compose up -d
+docker-compose help
+docker-compose stop
+docker-compose start
+docker-compose down
+
+kafka-topics --bootstrap-server localhost:29092 --list
+
+
+================= criando topicos =================
+
+Listar 
+    kafka-topics --bootstrap-server localhost:29092 --list
+
+Crear topico
+    kafka-topics --bootstrap-server localhost:29092 --create --topic nome-topico
+    kafka-topics --bootstrap-server localhost:29092 --create --topic nome-topico --describe
+    kafka-topics --bootstrap-server localhost:29092 --alter --topic nome-topico --partitions 10 
+
+Enviar mensagem pro KAFKA
+    kafka-console-producer
+    kafka-console-producer --broker-list localhost:29092 --topic nome-topico
+
+Enviar mensagem pro KAFKA com CHAVES
+    kafka-console-producer --broker-list localhost:29092 --topic nome-topico --property parse.key=true --property key.separator=,
+    1, mensagem 1
+    1, mensagem 2
+    2, mensagem 1 
+    ...
+
+Consumir mensagem KAFKA
+    kafka-console-consumer
+    kafka-console-consumer --bootstrap-server localhost:29092 --topic nome-topico
+    kafka-console-consumer --bootstrap-server localhost:29092 --topic nome-topico --from-beginning
+
+Comsumir de um grupo (grupo é a particao)
+    kafka-console-consumer --bootstrap-server localhost:29092 --topic nome-topico --group nome-grupo
+
+Comsumir de um topico com CHAVES
+    kafka-console-consumer --bootstrap-server localhost:29092 
+        --topic nome-topico --property print.key=true --property key.separastor=, --group nome-grupo
+
+
+Excluir topicos
+    kafka-topics --bootstrap-server localhost:29092 --delete --topic nome-topico
+
+
+================= Ferramenta CONDUKTOR =================
+
+================= Consumer em JAVA =================
+
+================= Sistema de processamento de vendas =================
+
+================= WSL Sub sistema do Windowns pra linux =================
+
+
+
+
+
+
+
+
+
+
+
+

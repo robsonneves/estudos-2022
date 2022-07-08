@@ -1,0 +1,528 @@
+
+================= Kubernates =================
+
+
+Containers (são linux)
+	APP
+	Bin / Lib 
+
+Docker Engine
+	gerencia os conteiners
+
+Linguagem .YAML
+	Linguagem de marcação ultilizada para fazer a configuração DOCKER / KUBERNATES
+
+Introdução a KUBERNETES (K8s)
+	Orquestração de conteiners
+	Node / Minions -> maquina fisica ou virtual que o kubernetes esta instalado
+	Docker -> Conteiners criados dentro do NODE
+	Cluster -> um conjunto de NODEs instalados em uma maquina.
+	Master -> Gerencia os menbros do cluster é um NODE que gerencia os outros. NODE Works.
+		API-Server -> comunicação com a aplicação
+		Etcd -> Banco de dados 
+		Scheduler -> distribuidor de trabalho
+		Controller -> Controla a os conteiners
+		Conteiner Runtime -> se comunica com Docker
+		KLubelet -> agente executado em cada node. 
+
+
+================= Preparando Anbiente =================
+
+Pré-requisitos
+	Docker
+	MiniKube - O que baixa pra rodar na maquina local
+	Kubectl
+
+
+================= Conceitos de Kubernetes =================	
+
+CLUSTER
+	NODE MASTER
+	NODE WORKS
+		PODS (Aumenta os pods para dividir a carga)
+			CONTEINER
+				Aqui tentro esta a aplicação
+
+1 POD só tem 1 Conteiner
+PODs Multi-Conteiner
+
+
+================= Kubernetes alguns comandos =================	
+
+Verifica status do KUBE
+	minikube status
+
+Deleta todos os cluster
+	minikube delete
+
+Inicia um cluster
+	minikube start
+
+Criar um POD
+	kubectl run nginx --image nginx (nomde da imagem local ou do Docke Rub)
+
+Verificar todos pods do cluster
+	kubectl get pods
+
+Verifica todos os pods com algumas info a mais
+	kubectl get pods -o wide
+
+Verifica info desse pod especifico
+	kubectl describe pod nginx(nome do pod)
+
+Criar POD a partir do arquivo .YAML
+	kubectl create -f pod.yaml
+	kubectl apply -f pod.YAML
+
+
+================= Logs =================
+
+kubectl --namespace my-namespace get pods
+kubectl logs
+kubectl logs pod-name
+kubectl logs pod-name container-name
+kubectl logs pod-name --all-containers
+kubectl logs -l my-label=my-value --all-containers
+kubectl logs pod-name --since=2h
+kubectl logs my-pod > my-pod-logs.txt
+
+
+================= Arquivo .YAML =================
+
+Definições basicas 
+
+root level
+
+	apiVersion: versão do obj (v1)
+	kind: qual o tipo do obj (Pod)
+	metadata: informações do obj
+		name: nome-do-pod
+		labels:
+			app: nome-da-app
+	spec: 
+
+- exemplo no arquivo exemplo-pod.yaml
+
+================= PODs =================	
+
+Comandos pra subir 
+	minikube start
+	kubectl get pods
+
+Criar PODs
+	kubectl create -f nome-do-arquivo-pod.yaml
+	kubectl apply -f nome-do-arquivo-pod.yaml
+
+Deletar POD
+	kubectl delete pod nome-do-pod (name)
+
+================= ReplicasSets =================
+
+ReplicasSets
+Replication controller 
+Balanceamento e escala
+
+scale UP
+scale DOWN
+
+exemplo .yaml
+
+--- Replica Controller
+
+	apiVersion: v1
+	kind: ReplicationController
+	metadata:
+		name: aplicacao-rs 
+		labels:
+			app: aplication
+			type: frontend
+	spec:
+		template:
+			metadata:
+				name: aplicacao-pod
+				labels:
+					app: aplicacao
+					type: frontend
+			spec:
+				containers:
+					- name: nginx-container
+					  image: ngins
+		replicas: 2 (quantidade de replicas)
+
+
+criar pod
+	kubectl create -f nome-do-arquivo.yaml
+Quais PODs existem
+	kubectl get replicationcontroller
+
+
+--- Replica Set 
+
+apiVersion: aaps/v1
+	kind: ReplicaSet
+	metadata:
+		name: aplicacao-rs 
+		labels:
+			app: aplication
+			type: frontend
+	spec:
+		template:
+			metadata:
+				name: aplicacao-pod
+				labels:
+					app: aplicacao
+					type: frontend
+			spec:
+				containers:
+					- name: nginx-container
+					  image: ngins
+		replicas: 2 (quantidade de replicas)
+		selector:
+			matchLabels:
+				type: frontend
+
+
+criar pod
+	kubectl create -f nome-do-arquivo.yaml
+
+Quais PODs existem
+	kubectl get replicaset 
+	kubectl get replicasets 
+	kubectl get pods 
+
+Atualizar alteracoes no doc yaml	
+	kubectl replace -f nome-do-arquivo.yaml
+	kubectl scale --replicas=6 -f nome-do-arquivo.yaml
+	kubectl scale --replicas=8 -f replicaset aplicacao-rs(nome)
+
+
+kubectl create -f arquivo.yaml
+kubectl get replicaset
+kubectl delete replicaset nome-do-replicaset 
+kubectl replace -f arquivo.yaml
+kubectl scale --replicas=x -f arquivo.yaml
+kubectl describe replicaset nome-do-replicaset
+kubectl scale replicaset nome-replicaset --replicas=?4
+kubectl scale replicaset nome-replicaset --replicas=?2
+
+** Rocomendado Usar Replicas ReplicasSets
+
+
+================= Deployments =================
+
+Trocar as versoes do sistemas em um pod de cada vez
+	rolling release / rolling updates
+
+Manutenção programada, pausa a aplicacao ajusta tudo e sobe tudo de volta
+
+--- Ex yaml Deployment 
+
+apiVersion: aaps/v1
+	kind: Deployment
+	metadata:
+		name: aplicacao-rs 
+		labels:
+			app: aplication
+			type: frontend
+	spec:
+		template:
+			metadata:
+				name: aplicacao-pod
+				labels:
+					app: aplicacao
+					type: frontend
+			spec:
+				containers:
+					- name: nginx-container
+					  image: ngins
+		replicas: 2 (quantidade de replicas)
+		selector:
+			matchLabels:
+				type: frontend
+
+--- Comandos
+
+kubectl create -f nome-do-arquivo-deployment.yaml
+kubectl get deployment
+kubectl get replicaset
+kubectl get pods
+kubectl get all
+kubectl describe deployment nome-deployment 
+
+--- Atualizando ou desfazendo o deployment 
+
+Qualquer atualizacao no cluster gera uma revisao.
+
+kubectl rollout status deployment/nome-do-deployment
+kubectl rollout status history deployment/nome-do-deployment
+kubectl describe deployment nome-do-deployment 
+
+Estrategias de publicacao
+	- Recreate       ( Todas as instancias sao recriadas ao mesmo tempo )
+	- Rolling Update ( Atualiza uma instancia de cada vez )
+
+Atualizacao
+	kubectl apply -f nome-do-arquivo.yaml
+	kubectl create -f nome-do-arquivo.yaml --save-config
+
+Rollback
+	kubectl rollout undo deployment/nome-do-arquivo
+
+Publicar programa rapido
+	kubectl run nginx --image=nginx
+
+
+--- comandos
+
+kubectl create -f deployment.yaml --save-config
+kubectl create -f deployment.yaml --save-config --record  (add info no history)
+kubectl get deployments 
+kubectl apply -f deployment.yaml 
+kubectl rollout status deployment/nome-do-deployment
+kubectl rollout history deployment/nome-do-deployment
+kubectl rollout undo deployment/nome-do-deployment
+kubectl rollout undo deployment/nome-do-deployment --to-revision=1 (selecionar o numero da revisao)
+kubectl delete deployment/nome-do-deployment
+kubectl set image deployment nome-do-deployment frontend-conteiner=nginx:1.18 --record 
+
+Corrigir erro
+	kubectl rollout undo deployment/nome-da-image
+	kubectl apply -f deployment.yaml ( ajusta a imagem e roda o comando )
+
+scalar o deployment
+	kubectl scale deployment/nome-deployment --replicas=10
+
+scale up 
+scale down 
+
+minikube delete
+minikube start
+
+exemplo de atualizacao 
+	image: nginx:1.19.4
+
+
+Definir estrategia de rollout
+	No arquivo .yaml adicionar  strategy: ... 
+
+--- Usando a estrategia de recreate
+
+apiVersion: aaps/v1
+	kind: Deployment
+	metadata:
+		name: aplicacao-rs 
+		labels:
+			app: aplication
+			type: frontend
+	spec:
+		template:
+			metadata:
+				name: aplicacao-pod
+				labels:
+					app: aplicacao
+					type: frontend
+			spec:
+				containers:
+					- name: nginx-container
+					  image: ngins
+		replicas: 2 (quantidade de replicas)
+		selector:
+			matchLabels:
+				type: frontend
+		strategy:
+			type: Recreate
+
+---
+================= Redes com Kubernates =================
+
+kubectl cluster-info
+kubectl get namespaces | kubectl get ns 
+kubectl get pods -n default (namespace)
+kubectl get all -n default (nomespaces)
+
+Criar namespaces
+	kubectl create namespace frontend(nome) --save-config
+	kubectl get ns 
+	kubectl create -f pods/nginx.yaml --save-config --namespace=frontend(nome-criado)
+	kubectl get pods -n frontend(nome-criado)
+
+Configurar pra sempre usar esse namespaces
+	kubectl config set-context --current --namespace=frontend
+
+Criar namespace via arquivo .yaml 
+
+Get Pods por namespace
+kubectl --namespace my-namespace get pods
+
+Referencia
+https://kubernetes.io/pt-br/docs/concepts/overview/working-with-objects/namespaces/
+
+	kubectl get pods --namespace=<insert-namespace-name-here>
+	kubectl config view --minify | grep namespace:
+
+referencia
+https://www.howtogeek.com/devops/how-to-view-kubernetes-pod-logs-with-kubectl/
+
+	kubectl logs pod-name --since=2h
+
+
+
+ex acessar logs 
+
+	kubectl get pods --namespace=(namespace)
+	kubectl logs prometheus-prometheus-monit-stack-0 --all-containers
+	kubectl logs -f prometheus-prometheus-monit-stack-0 --all-containers
+
+---
+
+apiVersion: v1
+kind: Namespace 
+metadata:
+	name: backend
+
+kubectl create -f namespaces/backend.yaml --save-config
+
+---
+
+kubectl describe pod nome-pod
+kubectl exec -it nome-do-pod -- bash (acessa terminal do pod)
+apt update 
+apt search mysql-client
+apt install default-mysql-client -y 
+mysql -h ip8.8.8.8.8 -root(user) -p(senha)password geek(nome-banco)
+
+
+================= Servicos no kubernates =================
+
+cat /etc/resolv.conf
+
+kubectl get all -n kube-system
+nslookup kunerbater/nome-servico
+
+--- FQDN
+
+kubernates.default.svc.cluster.local
+
+kubernates		-> Nome do servico
+default			-> Namespace padrao do kubernates
+svc 			-> Servico (kind: service)
+cluster.local   -> Nome do cluster
+
+---
+================= Servicos no kubernates =================
+
+Comunicar POD com o mundo externo.
+
+Tipos de servico 
+	NodePort     -> abilita acesso externo
+	ClusterIp    -> servicos privados
+	LoadBalancer -> Servico pra balancear carga
+
+NodePort   -> porta do cluster pro POD 
+Port       -> porta ddo servico com o POD 
+TargetPort -> parta do POD 
+
+NodePort range de portas 30000 - 32767
+
+--- Exemplo .yaml Servico public NodePort
+
+apiVersion: v1
+kind: Service 
+metadata: 
+	name: frontend-svc 
+spec:
+	selector:
+		type: frontend
+	ports:
+		- name: http 
+		  targetPort: 80
+		  port: 80 			-> campo obrigatorio
+		  nodePort: 30080
+	type: NodePort
+
+
+--- Servico privado ClusterIp
+
+apiVersion: v1
+kind: Service 
+metadata: 
+	name: frontend-svc 
+spec:
+	selector:
+		type: frontend
+	ports:
+		- name: http 
+		  port: 80 			-> campo obrigatorio
+	type: ClusterIp
+
+-- Servico LoadBalancer
+
+apiVersion: v1
+kind: Service 
+metadata: 
+	name: frontend-svc 
+spec:
+	selector:
+		type: frontend
+	ports:
+		- name: http 
+		  targetPort: 80
+		  port: 80 			-> campo obrigatorio
+	type: LoadBalancer
+
+
+--- Comandos 
+
+kubectl create -f nome-arquivo.yaml
+kubectl get services
+
+minikube delete
+minikube start
+
+kubectl create -f arquivo.yaml --save-config --record
+
+minikube ip 
+minikube service frontend-svc --url
+
+
+---
+
+Para o front-end usar o LoadBalancer
+Entre o frontend e o backend usar ClusterIp
+
+
+================= kubernates com micro servicos =================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

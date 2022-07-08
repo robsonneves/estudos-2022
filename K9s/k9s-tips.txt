@@ -1,0 +1,32 @@
+
+================= K9s =================
+
+Verificar os contextos e em qual esta
+    kubectl config get-contexts
+
+Setar um contexto
+    kubectl config use-context <context_name>
+    :ctx
+
+Entrar no K9s
+    k9s 
+
+Entrar na linha de comando 
+    :
+
+Dentro da linha de comando 
+    :ns      - namespaces
+    :deploy  - implantacoes
+    :ing     - ingressos
+    :svc     - servicos
+    :aliases - lista de recursos
+
+Para fazer pesquisar usar / na tela que desejada buscar 
+    /nome-a-pesquisar
+
+Escolher o contexto 
+    :ctx
+
+Visao de grafico para com dados sobre deploy/replicas/oids etc
+    :pulse
+

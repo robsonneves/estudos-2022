@@ -1,0 +1,146 @@
+
+Projetando Arquitetura Com Segurança: Um Framework Para Proteger O Ciclo De Vida Do Software 
+
+
+=====================================================
+=====================================================
+Aula 01 - EP 01
+=====================================================
+=====================================================
+
+Desenvolvimento seguro.
+SDL - pensar em seguranca no inicio do projeto
+
+Seguranca por desenho
+    - Add seguranca desde o desenho.
+    - avaliacao de entrada e saida / comunicacao
+    - tomar cuidado com bibliotecas externas
+
+Seguranca como padrao
+    - Ao lancar o app ja esteje com itens de seguranca 
+    - privilegios de usuarios / read only (sempre usar menor privilegio)
+    - Defesa em profundidade (Criar mecanismo com multiplas camadas de seguranca)
+    - Seguranca no deploy 
+        - Documentacao do sofware
+        - Versionamento do software 
+        - Gerenciamento de PATH
+    
+
+=====================================================
+=====================================================
+EP 02
+=====================================================
+===================================================== 
+
+Confidencialidade - Integridade - Disponibilidade
+
+Confidencialidade
+    - Preocupacao de ñ revelar informacoes confidenciais
+    - Dado em repouso criptografia
+    - Dado em trasito criptografia 
+    - Dado em memoria controle de acesso
+
+Integridade
+    - Ñ permitir a alteracao indevida do DADO
+
+Disponibilidade
+    - Dado tem que estar disponivel
+
+---
+
+Autenticacao - multiplo fatores
+    - Senha
+    - Token de Acesso 
+    - Pin
+    - Biometria
+
+Autorizacao - Usuario tem privilegios ou ñ
+    - Requisitor
+    - OBJ
+    - Tipo de Acesso
+
+Auditoria
+    - habilitar os logs 
+    - Revisar os logs 
+    - Investigar os logs
+
+Nao REPUDIO
+    - Usuario negar o que fez
+
+
+---
+
+Gerenciador de Sessao
+    - Canal seguro de comunicacao
+Gerenciador de Exessao
+    - Gerar um erro (tratar de forma segura)
+Gerenciador de Configuracoes
+    - Estado inicial da aplicacao
+
+
+Securite Gatware
+    - Ter uma equipe para validar/verificar a seguranca planejada
+Bugs
+    - Analisar/mitigar busgs
+        - Usar uma formula pra decidir se corrige o bug ou ñ (impacto x probabilidade)
+        - Qual dano em cima dos 3 pilares (Confidencialidade - Integridade - Disponibilidade)
+        - Quantos usuarios podem ser afetados / qual a probabilidade disso acontecer
+        - Qual a dificuldade pra encontrar esse vunabilidade (vuneravel)
+        
+
+=====================================================
+=====================================================
+Aula 02 - EP 03
+=====================================================
+===================================================== 
+
+Ferramenta
+    - Microsoft Thread Modeling Tool
+
+MODELAGEM DE AMEAÇAS
+    Threat Modeling fazer a cada fase
+    Stride - Tipos de ameacas
+        S - Acesso ilegal do usuario ex: user/senha 
+        T - Modificacao do dado
+        R - Usuario fez acao e pode dizer que ñ fez
+        I - Exposicao de informacao indevida 
+        D - Causar a perda de disponibilidade (DDOs / DOS)
+        E - Usuario ñ autorizado consegue elevar seu privilegio
+
+=====================================================
+=====================================================
+EP 04
+=====================================================
+===================================================== 
+
+Etapas Threat Modeling
+    1 - identificas os Assets
+    2 - criar a Arquitetura
+    3 - Decompor a aplicacao
+    4 - Identificar as amaeacas
+    5 - Priorizar as ameacas
+
+=====================================================
+=====================================================
+EP 05 - testes 1
+=====================================================
+===================================================== 
+
+FUZZ - teste automatizados
+Ciclos de revisao
+Avalicao de Vetores de ataque
+BASELINE
+Reutilizacao do codigo
+Antiaduteracao
+Versao de codigo
+Padroes
+Teste de performace
+
+=====================================================
+=====================================================
+EP 05 - testes 2
+=====================================================
+===================================================== 
+
+Teste de regressao (feito quando altera o codigo)
+

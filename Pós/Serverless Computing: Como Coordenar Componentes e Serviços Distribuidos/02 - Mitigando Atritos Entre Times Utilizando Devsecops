@@ -1,0 +1,113 @@
+
+Mitigando Atritos Entre Times Utilizando Devsecops
+
+
+-- DevSecOps 
+
+=====================================================
+=====================================================
+Conceito Ep 02
+=====================================================
+=====================================================
+
+O que é ?
+    Juntar em um time todos os skils nescessarios
+    Dev
+    Ops
+    Sec
+
+=====================================================
+=====================================================
+Conflitos Ep 03
+=====================================================
+=====================================================
+
+Insentivos desalinhados entre os timas DEV - SEC - OPS
+obj : unir o time para um objetivo comum
+
+=====================================================
+=====================================================
+Implementacao  Ep 04
+=====================================================
+=====================================================
+
+- 1 sec pra 100 devs
+
+Estrategia de 3 Pilares
+    - Educação (educar o time)
+    - Security by design 
+    - Automação
+    
+Educação
+    Disimar o conhecimetno de SEC para os devs, assim nascer o app com esse pilar
+        - guideline
+        - treinamentos regulares 
+        - Security Champions (ter embaixadores etc.)
+        - Avaliacoes periodicas de conhecimento (maturidade do time)
+        - Atualizacoes constantes dos itens acima
+
+
+=====================================================
+=====================================================
+Implementacao  Ep 05
+=====================================================
+=====================================================
+
+Security by design 
+    - Criar cultura no TIME, pra quando fazer o desenho pensar em SEGURANÇA
+    - Pilar de educacao é pré-requisito
+    - Codigo simples e legivel (usar clean CODE)
+    - threat modeling (), discutar ameacas, Modelagem de Ameacas
+        - buscar na solucao as brechas pra possivels ameacas
+        - Tipos de ameacas
+            - CIA 
+                - Confidencialidade (dados vazados) 
+                - Integridade (garantir o fluxo cliente/servidor, dados trafegando pela rede e integros)
+                - Disponibilidade (ataque que causa indisponibilidade do site/app)
+    - criar um DFD (Diagrama de fluxos de dados)
+    - Aplicar STRIDE em cima do DFD (APP apocalipse dentro da app)
+
+    
+=====================================================
+=====================================================
+Implementacao  Ep 06
+=====================================================
+=====================================================
+
+Automação
+    - Automatize tudo que for possivel
+    - Piramide de testes
+    - SAST - Static Application Security Testing
+    - DAST - Dynamic Appliction Security Testing
+    - MAST - Mobile Application Security Testing 
+    - Container Image Scanning
+    
+    - Adicionar esses caras no PIPE-LINE
+
+
+=====================================================
+=====================================================
+Implementacao  Ep 07
+=====================================================
+=====================================================
+
+Na PIPELINE
+    - SAST Check (testes do code)
+    - Secrets Check (alguma credencial exposta no codigo)
+    - SCA Check (Scan de dependencias)
+    - Iac Check (testes de INFRA)
+
+na AWS
+    codePipeline
+    securityHub
+
+
+=====================================================
+=====================================================
+AULA ON-LINE
+=====================================================
+=====================================================
+
+Snyk e SonarQube 
+SonarLint
+wappalyzer

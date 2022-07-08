@@ -1,0 +1,216 @@
+
+================= REDIS =================
+
+
+conectar
+	./redis-server
+	./redis-cli
+	echo "estou no redis"
+	SET "total_de_cursos" 105
+	GET "total_de_cursos"
+	DEL "nome_da_chave"
+	KEYS *
+	
+	MSET result:03-05-2015:megasena "1, 2, 3, 4, 5, 6" result:03-05-2015:megasena "1, 2, 3, 4, 5, 6" result:03-05-2015:megasena "1, 2, 3, 4, 5, 6" 
+	
+	KEYS "result*"
+	KEYS "result:03-05-2015:megasena*" 
+	KEYS "result:0*-05-2015:megasena"   
+	KEYS "result:0?-05-2015:megasena*" 
+	KEYS "result:0[37]-05-2015:megasena*" 
+
+	HSET result:24-05-2015:megasena "ganhadores" 23
+	HGET result:24-05-2015:megasena "ganhadores"
+	HDEL result:24-05-2015:megasena "ganhadores"
+
+	HSET "sessao:usuario:1675" "nome" "Guilherme"
+	HSET "sessao:usuario:1675" "total_de_produtos" "3"
+	HMSET "sessao:usuario:1675" "nome" "guilherme" "total_de_produtos" "3" "sobrenome" "silveira"
+	HGET "sessao:usuario:1675" 'nome'
+
+	EXPIRE "sessao:usuario:1675" 1800 (segundos)
+	TTL "sessao:usuario:1675"
+
+	SET  pagina:/contato:25-05-2015 1
+	INCR pagina:/contato:25-05-2015 
+	DECR pagina:/contato:25-05-2015
+	Soma numeros inteiros
+		INCRBY compras:25-05-2015:valor 2
+		INCRBY compras:25-05-2015:valor 2
+	Soma numeros quebrados
+		INCRBYFLOAT compras:25-05-2015:valor 22.5
+		INCRBYFLOAT compras:25-05-2015:valor 22.5
+
+	Setar Bits (tru or false)
+		SETBIT acesso:25-05-2015 11 1
+		SETBIT acesso:25-05-2015 49 1
+		SETBIT acesso:25-05-2015 30 1
+		GETBIT acesso:25-05-2015 11
+		GETBIT acesso:25-05-2015 49
+		GETBIT acesso:25-05-2015 30
+
+	Conta os BITS 
+		BITCOUNT acesso:25-05-2015
+
+	BITOP AND acesso:25-e-26-06-2015 acesso:25-06-2015 acesso:26-06-2015
+	GETBIT acesso:25-e-26-06-2015 11(chave/user)
+	BITCOUNT acesso:25-e-26-06-2015
+
+	BITOP OR acesso:25-ou-26-06-2015 acesso:25-06-2015 acesso:26-06-2015
+	GETBIT acesso:25-e-26-06-2015 11(chave/user)
+	BITCOUNT acesso:25-e-26-06-2015
+
+
+================= REDIS CURSO II =================
+
+Adicionar elemento no inicio da lista
+	LPUSH ultimas-noticias "Guilherme Silveira"
+
+Apara e mostra apenas os arrays de 0 a 2
+	LTRIM ultimas-noticias 0,2
+
+Buscar no indice 0
+	LINDEX ultimas-noticias 0
+
+Count da lista
+	LLEN ultimas-noticias 
+
+Pegar trecho da lista
+	LRANGE ultimas-noticias 1,2
+
+	RPUSH "fila:confirma-eamil" "guilherme.teste@alura.com"
+	RPUSH "fila:confirma-eamil" "joao.teste@alura.com"
+	RPUSH "fila:confirma-eamil" "pedro.teste@alura.com"
+	LLEN "fila:confirma-eamil"
+
+	LINDEX fila:confirma-email 0
+	LLEN fila:confirma-email
+
+Pega o primeiro sem ter efeito colateral
+	LPOP fila:confirma-email
+	RPOP
+
+Espera um tempo para buscar a lista e fazer um pop
+	BLPOP fila:confirma-email 30
+	BRPOP ...
+
+Conjuntos nao se repete itens no conjunto
+	SADD "relacionamentos:guilherme" "daniela"
+	SADD "relacionamentos:guilherme" "carlos"
+	SADD "relacionamentos:guilherme" "ana" "lucia"
+Quantidade de itens dentro do conjunto
+	SCARD "relacionamentos:guilherme"
+Lista os itens do Conjunto
+	smembers "relacionamentos:guilherme"
+Verifica se o itens esta dentro do conjunto
+	SISMEMBER "relacionamentos:guilherme" "carlos"
+Remove item do conjunto 
+	SREM "relacionamentos:guilherme" "carlos"
+Itens em comun entre dois conjuntos
+	SINTER "relacionamentos:guilherme" "relacionamentos:carlos"
+Itens diferentes entre dois conjuntos
+	SDIFF "relacionamentos:guilherme" "relacionamentos:marcela"
+
+Verificar o tipo da chave
+	TYPE nome-da-chave
+
+Trazer todos os dados de um HASH
+	HGETALL nome-da-chave
+
+	HINCRBY "jogador:1" "pontos" 1
+	HINCRBY "jogador:1" "pontos" 10
+	HINCRBYFLOAT "jogador:1" "pontos" 10.5
+
+Adicionar em um conjunto ordenado, primeira informacao que vai ser ordenada
+	ZADD pontuacoes 50076 guilherme
+	ZADD pontuacoes 65543 carlos
+	ZADD pontuacoes 33786 daniela
+	ZCARD pontuacoes
+	ZRANGE pontuacoes 0 3 
+	ZRAVRANGE pontuacoes 0 3
+	ZRANGE pontuacoes 0 3 WITHSCORES
+	ZRAVRANGE pontuacoes 0 3 WITHSCORES
+	ZRAVRANGE pontuacoes 0 -1 WITHSCORES
+	ZRAVRANGE pontuacoes 0 -2 WITHSCORES
+	ZRAVRANGE pontuacoes 0 -3 WITHSCORES
+	
+	ZSCORE pontuacoes guilherme 
+	ZRANK pontuacoes guilherme
+	ZREVRANK pontuacoes guilherme
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

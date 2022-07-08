@@ -1,0 +1,282 @@
+================= TESTES (Curso 1) =================
+
+- CENARIO
+- ACAO 
+- VERIFICAÇÃO
+
+Mesma estrutura de pastas consigo ver os tipos de var e methods
+    vDefault
+    vProtegida
+    vPublica
+
+
+================ Principais Asserts =================
+
+Verifica se retornar um bolean 
+    Assert.assertTrue(true);
+    Assert.assertTrue(!true);
+    Assert.assertFalse(false);
+
+Verifica dois valores   
+    Assert.assertEquals(v1, v2);
+    Assert.assertEquals(0.51, 0,51, 0.01); ultimo valor casa decimal
+    
+    int i = 5;
+    Integer i2 = 5;
+    Assert.assertEquals(Integer.valueOf(i), i2);
+    Assert.assertEquals(i, i2.intValue());
+
+    Assert.assertEquals("bola", "bola");
+    Assert.assertTrue("bola", "bola"); / valida maiusculas/minusculas
+    Assert.assertEquals("bola".startWith("bo"));
+    Assert.assertEquals("bola", "bola");
+
+
+Usuario u1 = new Usuario(Üser 01")
+Usuario u2 = new Usuario(Üser 02")
+
+    Assert.assertEquals(u1, u2); / implementar o method equals na class
+    Assert.assertEquals("bola", "bola");
+
+    Assert.assertSame("bola", "bola"); / valida o hash de memoria
+
+    Assert.assertTrue(u3 == null);
+    Assert.assertNull(u3);
+
+    Assert.assertThat();
+    Assert.assertEquals(locacao.getValor, CoreMatchers.is(5.0));
+    Assert.assertEquals(locacao.getValor, is(5.0));
+    Assert.assertEquals(locacao.getValor, is(CoreMatchers.equalsTo(5.0)));
+    Assert.assertEquals(locacao.getValor, is(equalTo(5.0)));
+    Assert.assertEquals(locacao.getValor, is(not(5.0)));
+
+    assertEquals(locacao.getValor, is(not(5.0)));
+    assertEquals(isMesmaData(locacao.getDataRetorno(), new Date()), is(true));
+
+    assert.fail();
+    assert.fail("Mensage que deseja enviar ...");
+
+
+================ Mostrar os erros em um so method =================
+
+    @Rule
+    public ErrorCollector error = new ErrorCollector();
+
+    erro.checkThat(locacao.getValor, is(not(5.0)));
+    erro.checkThat(isMesmaData(locacao.getDataRetorno(), new Date()), is(true));
+
+
+================ Lançando expected =================
+
+add no method
+    @Teste(expected=Expected.class)
+
+Usar try/catch e adicionar asserts nos dois cassos.
+
+@Rule
+public ExpectedException exception = ExpectedException.none();
+
+    exception.expect(exception.class);
+    exception.expectMessage("Mensagem da exception");
+
+
+================ BEFORE / AFTER =================
+
+Antes de cada method
+    @Before 
+
+Depois de cada method
+    @After
+
+Uma vez na execucao inteira
+    @BeforeClass -> no inicio -> public static void ....
+    @AfterClass  -> no fim    -> public static void ....
+
+private static int cotador = 0;
+
+
+================ ordernar os testes =================
+
+Add anotacao na class
+    @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+
+
+================ Ignorar test =================
+
+No method add anotacao
+    @Ignore
+
+addAssume no code
+    Assume.assumeTrue(DataUtils.verificaDiaSemana(new Date(), Calendar.SATURDAY));
+
+
+================ testes parametrizados / Teste Driven Build =================
+
+Anator a classe
+
+Ex.
+
+package br.ce.wcaquino.servicos;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
+
+import br.ce.wcaquino.entidades.Filme;
+import br.ce.wcaquino.entidades.Locacao;
+import br.ce.wcaquino.entidades.Usuario;
+import br.ce.wcaquino.exceptions.FilmeSemEstoqueException;
+import br.ce.wcaquino.exceptions.LocadoraException;
+
+@RunWith(Parameterized.class)
+public class CalculoValorLocacaoTest {
+
+	private LocacaoService service;
+	
+	@Parameter
+	public List<Filme> filmes;
+	
+	@Parameter(value=1)
+	public Double valorLocacao;
+	
+	@Parameter(value=2)
+	public String cenario;
+	
+	@Before
+	public void setup(){
+		service = new LocacaoService();
+	}
+	
+	private static Filme filme1 = new Filme("Filme 1", 2, 4.0);
+	private static Filme filme2 = new Filme("Filme 2", 2, 4.0);
+	private static Filme filme3 = new Filme("Filme 3", 2, 4.0);
+	private static Filme filme4 = new Filme("Filme 4", 2, 4.0);
+	private static Filme filme5 = new Filme("Filme 5", 2, 4.0);
+	private static Filme filme6 = new Filme("Filme 6", 2, 4.0);
+	private static Filme filme7 = new Filme("Filme 7", 2, 4.0);
+	
+	@Parameters(name="{2}")
+	public static Collection<Object[]> getParametros(){
+		return Arrays.asList(new Object[][] {
+			{Arrays.asList(filme1, filme2), 8.0, "2 Filmes: Sem Desconto"},
+			{Arrays.asList(filme1, filme2, filme3), 11.0, "3 Filmes: 25%"},
+			{Arrays.asList(filme1, filme2, filme3, filme4), 13.0, "4 Filmes: 50%"},
+			{Arrays.asList(filme1, filme2, filme3, filme4, filme5), 14.0, "5 Filmes: 75%"},
+			{Arrays.asList(filme1, filme2, filme3, filme4, filme5, filme6), 14.0, "6 Filmes: 100%"},
+			{Arrays.asList(filme1, filme2, filme3, filme4, filme5, filme6, filme7), 18.0, "7 Filmes: Sem Desconto"}
+		});
+	}
+	
+	@Test
+	public void deveCalcularValorLocacaoConsiderandoDescontos() throws FilmeSemEstoqueException, LocadoraException{
+		//cenario
+		Usuario usuario = new Usuario("Usuario 1");
+		
+		//acao
+		Locacao resultado = service.alugarFilme(usuario, filmes);
+		
+		//verificacao
+		assertThat(resultado.getValor(), is(valorLocacao));
+	}
+}
+
+
+================ Matchers proprios ==================
+================ Suite testes =================
+
+Secao 02 aula 21 (curso udemy)
+
+@RunWith(Suite.class)
+@SuiteClass({
+    testeCom.class
+})
+
+================ Data Builders =================
+================ Builder Master =================
+================ Analise de cobertura de testes =================
+
+plugin eclemma.
+
+
+================ Dependencias externas =================
+================ Mockito =================
+
+
+
+
+================ Indice Asserts =================
+
+Assert
+    Assert.assertTrue(true);
+    Assert.assertFalse(false);
+    Assert.assertEquals(v1, v2);
+    Assert.assertEquals("Erro de comparacao ... ", v1, v2);
+    Assert.assertNotEquals(v1, v2);
+    Assert.assertSame("bola", "bola");
+    Assert.assertNotSame("bola", "bola");
+    Assert.assertNull(u3);
+    Assert.assertNotNull(u3);
+    assert.fail();
+    assert.fail("Mensage que deseja enviar ...");
+
+Mockito
+
+
+
+
+
+
+================ Testes de Integração (Curso 2) ================= Martin Fowler
+ 
+@SpringBootTest
+@ContextConfiguration 
+
+
+--- Profiles
+
+    @Bean 
+    @Profile("test")
+    @Profile("!test")
+
+    @SpringBootTest
+    @ActiveProfiles("test")
+
+    @SpringBootTest(classes = {TestBean.class}) => instancia a classe como se foce no bean
+
+    @TestConfiguration na classe com os methodos que possuem os Bean
+    public class TestConfs.class{}
+
+    no teste add
+    @Import(TestConfs.class)
+
+
+--- Mocks e Stubs
+
+    Stubs  -> comportamento estatico
+    Mockes -> comportamento mais dinamico
+
+    @MockBean -> Criar objeto mock no contexto da aplicacao
+
+
+
+--
+
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = webEnvironment.RANDOM_PORT)
+
+Method para fazer get/post etc.
+exchange
+
+    ResponseEntity<Order> order = testRestTemplate.exchange(url , HttpMethod.GET, null, Order.class);
+    order = testRestTemplate.getForObject(url, Order.class, order.getId());
+    ResponseEntity<Order> order = testRestTemplate.getForEntity(url , Order.class, 100);

@@ -1,0 +1,36 @@
+
+
+Pensar sempre com os principios SOLID (Robert Martins / Ancou Bobi)
+
+S - Principio da responsabilidade unica.
+O - Principio Aberto fechado, aberto para extensão, fechada para modificação.
+L - Principio da substituição de Liscovi (programar orientado a interface)
+I - Principio da segregação de interface
+D - Principio Inversão de dependencia (modulos de auto/baixo nivel)
+
+
+== Padrão GOF 23padrões (grupo dos 4)
+
+Factory Method
+    O problema: trabalhar so com carro e pessoas, se precisar adicionar moto e comida.
+    A solução: Delegar metodos para subclasses (factory method), trabalhar orientado a interfaces.
+
+Abstracty Factory
+    O problema: agora temos varios transportes, e varias tipos de empresas que prestam esses servicos
+    A solucao: deixar as coisas mais abstratas para se moldar a nescessidade
+
+Bilder
+    O problema: Problemas com objetos complexos
+    A solucao: builder. criar componentes separados
+
+Adapter
+    O problema: adaptar o sistema a outras ormas json/xml ou dois meios de pagamento
+    A solucao: adpter
+
+Bridge
+    O problema: Padrao estrutural, objs grandes, live no youtube mas quer mandar pra outras plataformas
+    ñ usar heranca mas sim composicao / abstracao(intensoes) e implementacao
+    A solucao: bridge
+
+Chain of Responsability
+

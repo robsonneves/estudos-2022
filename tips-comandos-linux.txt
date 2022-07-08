@@ -1,0 +1,59 @@
+
+================= Comandos Linux =================
+
+ctrl + alt + t (abrir o terminakl)
+
+cd -
+cd (tiu)
+cd && ls
+
+================= ls =================
+
+ls -a (ver arquivos ocultos)
+ls -la (ver arquivos )
+ls -lh 
+ls -ltr (em ordem )
+
+ls -l (lista de arquivos)
+ls -lr (lista em ordem reversa)
+ls -R ( subDiretorios)
+ls -lS ( tamanho do arquivo )
+ls -m ( separar diretorios com virgula )
+ls --help (manual do comando)
+
+================= cat =================
+
+Criar ou ler arquivo
+
+cat nome-do-arquivo
+cat nome-do-arquivo nome-do-arquivo2
+cat nome-do-arquivo nome-do-arquivo2 > nome-do-arquivo3 (merge dos arquivos)
+cat -n nome-do-arquivo3 (mostra com linhas)
+
+cat -e nome-do-arquivo3 (mostra final de linhas)
+cat teste >> teste3 (concatenar no final do arquivo)
+
+================= touch =================
+
+Alterar timestemp / criar arquivos
+
+touch teste2
+touch teste5 ( criar arquivo )
+touch teste5 teste6
+
+================= man =================
+
+manual de ultilizacao dos Comandos
+
+man ls (visualiza todos os comandos de ls )
+
+================= ctrl+r =================
+
+
+
+
+
+
+
+
+

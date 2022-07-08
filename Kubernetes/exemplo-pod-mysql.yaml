@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mysql-pod
+  labels:
+    app: mysql-app
+spec:
+  conteiners:
+    - name: mysql-conteiner
+      image: mysql:5
+      env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: password
+        - name: MYSQL_DATABASE
+          value: geek
+
+      #env:                             cria variaveis
+      #  - name: MYSQL_ROOT_PASSWORD    passa senha do bando
+      #    value: password              valor de senha
+      #  - name: MYSQL_DATABASE         cria um database
+      #    value: geek                  nome do DB
+

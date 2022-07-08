@@ -1,0 +1,272 @@
+
+
+-- Serverless Computing: Como Coordenar Compoenentes e Serviços Distribuidos
+
+
+Prof. Fernando Sapata
+Prof. Anderson Felipe Pereira
+
+
+Conceitos e caracteristicas 
+    Serverless Computing
+    BaaS (BackEnd as a Service)
+    FaaS (Function as a Service)
+    Serverless Containers
+
+=====================================================
+=====================================================
+Semana 01
+=====================================================
+=====================================================
+Aula 01 - Curriculo e Containers
+
+Tecnologia Serveless 
+    -> Aplicação sem servidor
+
+Containers          
+    -> Base dos serverless
+    -> User Space
+    -> Execulção Consistente
+    -> Parametro de Configurações (dev, prod)
+    
+Solares 10 / 2013 docker
+    
+=====================================================
+Aula 02 - Serverless
+
+Serveless
+    -> Sem servidor ?
+    -> ñ precisa fazer a gestão 
+    -> Abstrair uma camada de serviço
+
+Caracteristicas
+    -> Pagar somente pelo uso  (Pe yes you go)
+    -> ñ precisa gerenciar a infra
+    -> Alta disponibilidade
+    -> Escalabilidade
+    
+Complexidade Essencial x Complexidade Acidental
+    Complexidade Essencial = Complexidade da solucao mesmo 
+    Complexidade Acidental = Desenvolvedores add nos desenhos
+
+Responsabilidade Operacional
+
+    ----------- Mais serverless ---------->>>
+    On-Primeses
+    Iaas            = Infra como servico
+    CaaS            = Conteiners como servico
+    PaaS            = Plataforma como servico
+    FaaS            = Funcao como servico
+    <<<<------- Maior Responsabilisade Operacional --------
+
+Serverless Diminui Responsabilidade operacional e econimiza grana.
+
+=== Pros e Contras Serverless 
+
+Pros
+    -> Maximiza descolamento linha de lucros x despesas
+    -> ñ precisa gerenciar servidores
+    -> Alta disponibilidade
+    -> Serverless Aproxima de complexidade essencial
+    -> Menor time two marketing (ñ se preocupa com infra)
+    -> Maximo reuso do sistema
+    
+Contras
+    -> Dependencia do seu consumidor
+    -> Menos controle da infra
+    -> Complexidade de Monitoramento / Observabilidade
+    -> Tunin de codigo, finin tunin
+    -> Tempo de execução / limites de execucao
+    -> Testes. Complexidade de testes de cada funcao
+
+Usar sempre FremeWorks com testes e dev
+Usar sempre DVOPS
+
+
+=====================================================
+Aula 03 - BAAS / FAAS / Conteiners Serverless
+
+=== BAAS = BackEnd As A Service (Backend como servico)
+    
+    -> DB como servico
+    -> Mensageria como servico
+    -> Armazenamento de objeto como servico (S3)
+
+    Servico Gerenciado / Solucao Gerenciado
+
+=== FAAS = Função como Serviço
+
+    -> Serverless favorece a modernização
+    -> Escalabilidade 
+    -> Considerar no desenho 
+        * Ser Efemero (funcao ñ tem estado)
+        * Cold start (iniciando a aplicacao)
+        * Kubernates -> FaaS (Key Native)
+    -> Portabilidade ?
+    -> Faz deploy do conteiner
+        * Escalabilidade
+        * Resiliencia
+        * Reduz Custo
+    
+=== CAAS = Conteiner AS A Service (Conteuner como servico)
+
+    -> Tem um pouco mais de portabilidade
+    -> Kubernates tem na maiorias das nuvens inclusive on-primese
+    -> +Complexidade
+    
+
+=====================================================
+=====================================================
+Semana 02
+=====================================================
+=====================================================
+Aula 01 - Arquitetura orientada a eventos
+
+EDA 
+    - ñ sincrona / é assincrona
+    - Eventos sempre no passado / ja aconteceu
+    - Define um Evento de negocio (evento orientado ao negocio)
+    
+    Produtor   -> Quem produz o evento / triga
+    Consumidor -> Quem consome o evento
+    Canal      -> por onde seu evento trafega 
+        (ex: pub/sub, http)
+        (ex: streaming de dados(particoes chards) / kafka)
+    Evento     -> A mensagem que vc precisa enviar
+
+ERROS COMUN
+    - Tomar cuidado com o Tamanho do evento enviado
+    - Excesso de Eventos 
+    - Falta de estrategias de reprocessamentos e DLQ 
+    - Idempotencia (capacidade de fazer varias vezes o mesmo processo e chegar ao mesmo resultado)
+    - Evento Generico de mais
+    - Eventos que ñ são baseados em negocio
+    - Falta de observabilidade
+    - Orquestracao e Corrografia (usar mais corrografia e menos orquestracao)
+
+
+=====================================================
+Aula 02 - Desacoplamento, escalabilidade e resiliencia
+
+Desacoplamento
+    sns /sqs / eventBridge / apiGateway
+    Cloud Pub/Sub / Cloud APIs
+    Azure Event Hub / Azure Service Bus / Azure Event Grid
+
+Escalabilidade
+    Scale out / Scale In
+
+Resiliencia
+
+
+=====================================================
+Aula 03 - Solucao de Problemas
+
+Vendor Lock-in
+    Contrato com permanencia minima
+    Sistema que so tem uma empresa que da suporte
+
+Tomar cuidado com contratos assinados 
+    DB
+    Proverdor de Nuvem
+    Sistema muito expecifico
+
+Padroes de Projeto
+    Separa entrypoints da funcao main (empacotar em bibliotecas o code)
+    Pipelines
+
+Dependencia Externa
+    Usar Variaveis de ambiente
+    Consul -> gerencia entrada e saida / criar parametro
+    ETCD -> DB com valores distribuidos
+    DB ñ relacional -> performace melhor (larga escala fica caro), cache
+    Memoria ->  DB do tipos memory, redis/mencache
+
+
+=====================================================
+Aula 04 - Desenvolvimento Local
+
+Pontos Contra DEV LOCAL Serveless
+
+FremeWorks
+    Serverless FrameWork (Desenvolvimento em mutiplos nuvens etc.)
+
+LocalStack                  -> simula varios servicos AWS
+serverless-dybamodb-local   -> simula dynamo
+serverless-s3-local         -> simuna S3
+elasticmq                   -> simuna ambiente de fila
+Mock-ups
+
+
+OBS:
+
+    Habilidades de hum Arquitero de Software
+        - Comunicacao
+        - Negociacao
+        - tecnologias DB
+
+=====================================================
+=====================================================
+Semana 03
+=====================================================
+=====================================================
+Aula 01 - Conbinações
+
+Padrao de modernizacao da maioria dos sistemas
+    - Padrao de estrangulamento
+    - 
+
+LB  - LOAD APLICATION = balanceia portas
+ALB - APLICATION LOAD BALANC = consegui direcionar por setor
+LAMBDA  - processamento ate 15 mim
+FARGATE - Parecido com o LAMBDA, mas ñ tem limite de tempo 
+
+
+=====================================================
+Aula 02 - Boas Praticas
+
+Acelerar nosso processo de desenvolvimento de Software
+
+FaaS Serverless
+1)  Sempre use um Gateway de API (ALB)
+2)  usar sempre uma Unica Funcao por ROTA
+3)  Não esquecer dos testes
+4)  Desenvolva Localmente sempre que possivel (usar Mocks)
+5)  Salvar configuracoes e parametros fora da funcao
+6)  Utilizar LOGs em todas as camadas (ELS)
+7)  Implementar ID de transacao unico (atencao com dados do cliente usar UUID) 
+8)  ter funcoes Efemeras / que vai ser descartado ao final da execucao
+9)  Considerar sempre o COLD STAT da funcao (que a funcao comeca em estado friu)
+10) Evite WAIT TIME - funcao que precisa ficar esperando algo
+11) Evitar funcoes monoliticas
+12) Gerenciar corretamente as BIBLIOTECAS
+13) sempre use CI/CD
+14) Considere sempre o TEMPO TOTAL de execucao da sua funcao
+15) sempre fazer o FINE-TUNNING / mais MEMORIA + CPU (execucao + rapida) /
+16) olhar o CUSTO TOTAL da solucao  
+17) sempre MINIFICAR o codigo
+18) separar o HANDLER da LOGICA DO PROJETO (seu codigo em pequenos pacotes)
+19) garatir a IDEMPOTENCIA, rodar a funcao varias vezes ela sempre vai ter o mesmo resultado
+20) Mais COROGRAFIA e menos ORQUESTRACAO (cada componente sabe o que fazer)
+
+
+=====================================================
+Aula 02 - Aequitetura de Referencia
+
+Aplicacao Pratica
+
+    COGNITO -> Autenticacao AWS
+    Amazon Kinesis (Firebase) + Lambda 
+    Cloud JOB / Cloud Watch -> scheduler
+    Cloud Watch -> vai pro LAMBDA -> SLACK / slack pode responder
+
+
+
+=====================================================
+=====================================================
+Evento Yuval Harari - 30/05
+=====================================================
+=====================================================
+
+
+

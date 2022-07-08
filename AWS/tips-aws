@@ -1,0 +1,460 @@
+
+-- Curso udemy
+-- Criando microsservico em java com AWS ECS Fargate e AWS CDK
+
+Conta AWS.
+    https://aws.amazon.com/pt/free
+    https://aws.amazon.com/pt/education/awseducate
+    https://console.aws.amazon.com
+
+Regiões AWS
+    Regiao > zonas
+    Recursos globais
+
+Recursos Principais
+    ECS - Elastic Container Service  ( ECS )-> Executar aplicacao em Container
+    ECS - Fargate -> Trabalha com o ECS para provisionar Recursos
+    ALB - Application Loas Balance ( ALB ) -> Nivel de aplicacao para redirecionar, dividir a carga recebida 
+    VPC - Virtual Private Cloud ( VPC ) -> Rede interna
+    RDS - Relational Database Service ( RDS ) -> Cra instancia de Database
+    DynamoDB ( NoSQL ) -> Cria instancia noSql
+    SNS - SimpleNotification Service ( SNS ) -> servico de topico
+    SQS - Simple Queue Service ( SQS ) -> servico de fila
+    S3  - S3 -> Servico de armazenamento de itens
+    CloudWatch -> Servico de monitoramento, logs metricas etc
+
+---
+
+Rodar APP dentro do DOCKER
+    Rasoes para rodar em Docker
+        Controle de recursos
+        Escalabilidade
+    Recurso para criar isso na AWS
+        ECS
+        FARGATE
+
+--- 
+
+    AWS Cloud Formation -> Criar recursos automatizados na AWS
+        - Cria templates .json ou .yaml com versionamento
+        - Criar TEMPLATE -> manda pra CloudFormation -> que cria Stack
+        - Se der ruim no deploy ele consegue fazer rollback
+        - Eventos dentro da Stack que determina o status da stack
+        - Aceita parametros para por ex definir ambiente
+
+    Criar usuario AWS pra configurar na maquina 
+        console.aws.amazon.com
+        IAM
+        ADD USER
+
+--- Comandos CLI AWS cdk
+
+Criar Projeto CDK
+    cdk init app --language java
+
+Listar staks dentro de um projeto
+    cdk list 
+
+Deploy na AWS
+    cdk deploy nome_stack
+
+Comando Config profile
+    cdk deploy --profile profile2
+
+Limpar pilha
+    cdk bootstrap
+
+Diferenca com o que ja foi deployado
+    cdk diff
+
+Deploy aninhado
+    cdk deploy Vpc Cluster
+
+Destro Staks
+    cdk destroy Vpn Cluster ...
+
+Fazer deploy com parametro - variaveis de ambiente
+    cdk deploy --parameters Rds(nome stack):databasePassword(nome parametro)=matilde123456(valor parametro) Rds(stack) Service01(outra stack)
+    cdk deploy --parameters Rds:databasePassword=matilde123456 Rds Service01
+    
+
+--- Arquitetura
+
+    VPC
+    ECS + Fargate 
+        > criar Tasks 
+            > cria Service (controla quantidade de pods/recicla etc) 
+                > cria IAM Role
+                    > cria Auto Scaling (cria destroy instancia se nescessario)
+                        > ALB - Load Balancer com target GRU (monitora as instancias) + Security Rules
+
+
+--- Criando AWS RDS (banco de dados)
+
+    passar senha como parametro
+
+---
+    LocalStack emula servicos da AWS - simular local
+
+    comando emular sistemas da aws no docker
+    docker run --rm -p 4566:4566 -p 4571:4571 localstack/ -e "SERVICES=sns,sqs,dynamodb,s3" 
+
+
+    Criar perfil localstack
+        aws configure --profile "your username"
+        localstack123
+        localstack123
+
+    * subindo localStack no docker 
+        na pasta com o doc docker-compose digite o comando docker-compose up
+
+    * Crianso SQS
+        aws --endpoint-url=http://localhost:4566 sqs create-queue --queue-name teste
+
+    * POstando SQS
+        aws --endpoint-url=http://localhost:4566 sqs send-message --queue-url http://localhost:4576/queue/teste --message-body "Mensagem de teste"
+        
+
+    * lendo fila 
+    aws --endpoint-url=http://localhost:4566 sqs receive-message --queue-url http://localhost:4566/queue/teste --max-number-of-messages 10                                                              
+    
+
+    --- Tutorial 02
+
+# Cria a fila com o nome FILA_DYNAMO
+aws sqs create-queue --queue-name FILA_DYNAMO --endpoint-url=http://localhost:4566
+
+# Cria a fila com o nome FILA_S3
+aws sqs create-queue --queue-name FILA_S3 --endpoint-url=http://localhost:4566
+
+# Cria o topico com o nome TOPICO_MENSAGENS
+aws sns create-topic --name TOPICO_MENSAGENS --endpoint-url=http://localhost:4566
+
+# Cria uma assinatura entre a fila FILA_DYNAMO e o topico TOPICO_MENSAGENS
+aws sns subscribe --topic-arn arn:aws:sns:us-east-1:000000000000:TOPICO_MENSAGENS --protocol sqs --notification-endpoint arn:aws:sqs:us-east-1:000000000000:FILA_DYNAMO --endpoint-url=http://localhost:4566
+
+# Cria uma assinatura entre a fila FILA_S3 e o topico TOPICO_MENSAGENS
+aws sns subscribe --topic-arn arn:aws:sns:us-east-1:000000000000:TOPICO_MENSAGENS --protocol sqs --notification-endpoint arn:aws:sqs:us-east-1:000000000000:FILA_S3 --endpoint-url=http://localhost:4566
+
+# Cria um bucket s3 com nome bucket-mensagens
+aws s3api create-bucket --bucket bucket-mensagens --region us-east-1 --endpoint-url=http://localhost:4566
+
+# Cria uma tabela no dynamodb com nome TabelaMensagens
+aws dynamodb create-table --table-name TabelaMensagens --attribute-definitions AttributeName​=id,AttributeType=S --key-schema AttributeName​=id,KeyType=HASH --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 --endpoint-url=http://localhost:4566
+
+# publicar em um topico
+$ aws --endpoint-url=http://localhost:4566 sns publish --topic-arn arn:aws:sns:us-east-1:000000000000:topic-localstack --message "Hello World!"
+
+
+
+
+============================== Teste ok POST SNS, SQS
+
+FILA SQS
+aws --endpoint-url=http://localhost:4566 --profile localstack sqs create-queue --queue-name FILA_REFUND
+aws --endpoint-url=http://localhost:4566 --profile localstack sqs send-message --queue-url http://localhost:4576/queue/FILA_REFUND --message-body "Mensagem de teste"    
+aws --endpoint-url=http://localhost:4566 --profile localstack sqs receive-message --queue-url http://localhost:4566/queue/FILA_REFUND --max-number-of-messages 10           
+
+
+Topico SNS
+aws --endpoint http://localhost:4566 --profile localstack sns create-topic --name DEV_OMS-PAYMENT-REFUND-ORCHESTRATOR-REFUND-RESPONSE
+aws --endpoint http://localhost:4566 --profile localstack sns publish --topic-arn arn:aws:sns:us-east-1:000000000000:DEV_OMS-PAYMENT-REFUND-ORCHESTRATOR-REFUND-RESPONSE --message "Hello World"
+
+Subscription
+aws --profile localstack sns subscribe --topic-arn arn:aws:sns:us-east-1:000000000000:DEV_OMS-PAYMENT-REFUND-ORCHESTRATOR-REFUND-RESPONSE --protocol --profile localstack sqs --notification-endpoint arn:aws:sqs:us-east-1:000000000000:FILA_REFUND --endpoint-url=http://localhost:4566
+
+DELETE
+aws --endpoint http://localhost:4566 --profile localstack sns delete-topic --topic-arn arn:aws:sns:us-east-1:000000000000:DEV_OMS-PAYMENT-REFUND-ORCHESTRATOR-REFUND-RESPONSE-teste
+
+LISTAR
+aws --endpoint-url=http://localhost:4566 --profile localstack sns list-topics
+
+LISTAR SUBSCRIPTION
+aws --endpoint-url=http://localhost:4566 --profile localstack sns list-subscriptions
+
+
+
+
+---
+
+SQS
+    aws --endpoint-url=http://localhost:4566 --profile localstack sqs create-queue --queue-name DEV_OMS-PAYMENT-REFUND-ORCHESTRATOR-REFUND-REQUEST
+
+POST SQS
+    aws --endpoint-url=http://localhost:4566 --profile localstack sqs send-message --queue-url http://localhost:4566/queue/DEV_OMS-PAYMENT-REFUND-ORCHESTRATOR-REFUND-REQUEST --message-body {msg: "Mensagem de teste"} 
+
+POST SQS FILE
+    aws --endpoint-url=http://localhost:4566 --profile localstack sqs send-message --queue-url http://localhost:4566/queue/DEV_OMS-PAYMENT-REFUND-ORCHESTRATOR-REFUND-REQUEST --message-body "Mensagem" --message-attributes "TenantID={StringValue=TestTenant,DataType=String}"
+
+    (JSON String, Number, Array, Object or token 'null', 'true' or 'false')
+
+SQS
+    aws --endpoint-url=http://localhost:4566 --profile localstack sqs create-queue --queue-name DEV_OMS-PAYMENT-REFUND-ORCHESTRATOR-REFUND-RESPONSE
+
+POST SQS
+    aws --endpoint-url=http://localhost:4566 --profile localstack sqs send-message --queue-url http://localhost:4566/queue/DEV_OMS-PAYMENT-REFUND-ORCHESTRATOR-REFUND-RESPONSE --message-body "Mensagem de teste 01" 
+
+SNS
+    aws --endpoint http://localhost:4566 --profile localstack sns create-topic --name TESTE
+
+SUBSCRIBE
+    aws --profile localstack sns subscribe --topic-arn arn:aws:sns:us-east-1:000000000000:TESTE --protocol --profile localstack sqs --notification-endpoint arn:aws:sqs:us-east-1:000000000000:DEV_OMS-PAYMENT-REFUND-ORCHESTRATOR-REFUND-REQUEST --endpoint-url=http://localhost:4566
+
+POST SNS
+    aws --profile localstack --endpoint-url=http://localhost:4566 sns publish --topic-arn arn:aws:sns:us-east-1:000000000000:TESTE --message "Hello" --phone-number +1-555-555-0100
+
+    aws --profile localstack --endpoint-url=http://localhost:4566 sns publish --topic-arn arn:aws:sns:us-east-1:000000000000:TESTE --message "Hello World" --output json | cat
+
+POST SQS
+    aws --endpoint-url=http://localhost:4566 --profile localstack sqs send-message --queue-url http://localhost:4566/queue/DEV_OMS-PAYMENT-REFUND-ORCHESTRATOR-REFUND-REQUEST --message-body "Mensagem de teste 01" 
+
+POST SQS - JSON
+    aws --endpoint-url=http://localhost:4566 --profile localstack sqs send-message  --queue-url http://localhost:4566/000000000000/DEV_OMS-PAYMENT-REFUND-ORCHESTRATOR-REFUND-REQUEST --message-body '{"body": {
+        "id": "433bdf03-3580-4584-823f-ec5f93e6c2d8",
+        "orderId": "123bdf03-3580-4584-823f-ec5f93e6c2d1",
+        "source": "ORDER_CANCELLATION",
+        "refund": {
+            "amount": 54.70,
+            "category": "FULL_REFUND"
+        },
+        "metadata": {
+            "cancellation_id": "643bdf03-3580-4584-823f-ec5f93e6c233",
+            "cancellation_requested_event_id": "912bdf03-3580-4584-823f-ec5f93e6c223",
+            "cancel_stage": "[PRE-CONFIRMED]",
+            "cancel_code": "406",
+            "cancel_origin": "CONSUMER",
+            "cancel_user": "257bdf03-3580-4584-823f-ec5f93e6c2d4",
+            "cancel_reason": "O pedido foi acidental",
+            "cancellation_dispute": {
+                "reason": "CLIENT_REQUEST_BEFORE_CONFIRMED",
+                "is_contestable": "CANCELLATION_IS_NOT_CONTESTABLE"
+            },
+            "cancellation_ocurrence": {
+                "consumer": {
+                    "payment_type": "N/A",
+                    "financial_ocurrence": "N/A"
+                },
+                "logistic": {
+                    "payment_type": "N/A",
+                    "financial_ocurrence": "N/A"
+                },
+                "restaurant": {
+                    "payment_type": "N/A",
+                    "financial_ocurrence": "N/A"
+                }
+            },
+            "timeout_event": false
+        },
+        "createdAt": "2022-06-13T09:12:40.248894Z"
+    }}' | cat
+
+RECEBER SQS
+    aws --endpoint-url=http://localhost:4566 --profile localstack sqs receive-message --queue-url http://localhost:4566/000000000000/DEV_OMS-PAYMENT-REFUND-ORCHESTRATOR-REFUND-REQUEST
+
+
+
+POST SQS - PAYMENT 
+    aws --endpoint-url=http://localhost:4566 --profile localstack sqs send-message  --queue-url http://localhost:4566/000000000000/DEV_OMS-PAYMENT-REFUND-ORCHESTRATOR-REFUND-RESPONSE --message-body '{"body": {
+        "name": "RefundFailedSchema",
+        "type": "record",
+        "namespace": "com.ifood.paymentrefundworker.adapter.avro.schema.refundrequest",
+        "fields": [
+            {
+                "name": "eventId",
+                "type": "string"
+            },
+            {
+                "name": "aggregateId",
+                "type": "string"
+            },
+            {
+                "name": "occurredOn",
+                "type": {
+                    "type": "long",
+                    "logicalType": "timestamp-millis"
+                }
+            },
+            {
+                "name": "metadata",
+                "type": {
+                    "type": "map",
+                    "values": "string"
+                }
+            },
+            {
+                "name": "refundId",
+                "type": "string"
+            },
+            {
+                "name": "requestId",
+                "type": "string"
+            },
+            {
+                "name": "paymentId",
+                "type": "string"
+            },
+            {
+                "name": "paymentProvider",
+                "type": "string"
+            },
+            {
+                "name": "payableType",
+                "type": "string"
+            },
+            {
+                "name": "amount",
+                "type": "MonetaryAmountSchema"
+            },
+            {
+                "name": "destination",
+                "type": "string"
+            },
+            {
+                "name": "type",
+                "type": "string"
+            },
+            {
+                "name": "paymentFlow",
+                "type": [
+                    "null",
+                    "PaymentFlowSchema"
+                ],
+                "default": null
+            },
+            {
+                "name": "isTest",
+                "type": [
+                    "null",
+                    "boolean"
+                ],
+                "default": null
+            }
+        ]
+    }}' | cat
+
+
+
+    aws --endpoint-url=http://localhost:4566 --profile localstack sqs send-message  --queue-url http://localhost:4566/000000000000/DEV_OMS-PAYMENT-REFUND-ORCHESTRATOR-REFUND-RESPONSE --message-body '{"body": {
+        "name": "RefundFailedSchema",
+        "type": "record",
+        "namespace": "com.ifood.paymentrefundworker.adapter.avro.schema.refundrequest",
+        "fields": [
+            {
+                "name": "eventId",
+                "type": "string"
+            },
+            {
+                "name": "aggregateId",
+                "type": "string"
+            },
+            {
+                "name": "refundId",
+                "type": "string"
+            },
+            {
+                "name": "requestId",
+                "type": "string"
+            },
+            {
+                "name": "paymentId",
+                "type": "string"
+            },
+            {
+                "name": "paymentProvider",
+                "type": "string"
+            },
+            {
+                "name": "payableType",
+                "type": "string"
+            },
+            {
+                "name": "amount",
+                "type": "MonetaryAmountSchema"
+            },
+            {
+                "name": "destination",
+                "type": "string"
+            },
+            {
+                "name": "type",
+                "type": "string"
+            }
+        ]
+    }}' | cat
+
+    
+RECEBER SQS PAYMENT
+    aws --endpoint-url=http://localhost:4566 --profile localstack sqs receive-message --queue-url http://localhost:4566/000000000000/DEV_OMS-PAYMENT-REFUND-ORCHESTRATOR-REFUND-RESPONSE
+
+
+---
+
+    aws --endpoint-url=http://localhost:4566 --profile localstack sqs create-queue --queue-name FILA_PAYMENT
+    aws --endpoint-url=http://localhost:4566 --profile localstack sqs list-queues
+
+    aws --endpoint http://localhost:4566 --profile localstack sns create-topic --name DEV_OMS-PAYMENT-REFUND-ORCHESTRATOR-PAYMENT-REFUND-REQUEST
+
+    aws --profile localstack sns subscribe --topic-arn arn:aws:sns:us-east-1:000000000000:DEV_OMS-PAYMENT-REFUND-ORCHESTRATOR-PAYMENT-REFUND-REQUEST --protocol --profile localstack sqs --notification-endpoint arn:aws:sqs:us-east-1:000000000000:FILA_PAYMENT --endpoint-url=http://localhost:4566
+
+
+
+--- rodar com a variavel local ${local} / ${!local}
+
+    environment variables
+        spring.profiles.active=local
+
+
+
+
+
+
+
+
+====================== Sequencia create ====================== 
+
+sequencia criacao SNS
+    aws --endpoint http://localhost:4566 --profile localstack sns create-topic --name DEV_OMS-PAYMENT-REFUND-ORCHESTRATOR-REFUND-RESPONSE
+    aws --endpoint http://localhost:4566 --profile localstack sns create-topic --name DEV_OMS-PAYMENT-REFUND-ORCHESTRATOR-PAYMENT-REFUND-REQUEST
+    aws --endpoint http://localhost:4566 --profile localstack sns create-topic --name TESTE
+
+sequencia criacao SQS
+    aws --endpoint-url=http://localhost:4566 --profile localstack sqs create-queue --queue-name DEV_OMS-PAYMENT-REFUND-ORCHESTRATOR-REFUND-REQUEST
+    aws --endpoint-url=http://localhost:4566 --profile localstack sqs create-queue --queue-name DEV_OMS-PAYMENT-REFUND-ORCHESTRATOR-REFUND-RESPONSE
+    aws --endpoint-url=http://localhost:4566 --profile localstack sqs create-queue --queue-name FILA_REFUND
+
+
+
+sequencia criacao SUBSCRIBE
+    aws --profile localstack sns subscribe --topic-arn arn:aws:sns:us-east-1:000000000000:TESTE --protocol --profile localstack sqs --notification-endpoint arn:aws:sqs:us-east-1:000000000000:DEV_OMS-PAYMENT-REFUND-ORCHESTRATOR-REFUND-REQUEST --endpoint-url=http://localhost:4566
+    aws --profile localstack sns subscribe --topic-arn arn:aws:sns:us-east-1:000000000000:DEV_OMS-PAYMENT-REFUND-ORCHESTRATOR-REFUND-RESPONSE --protocol --profile localstack sqs --notification-endpoint arn:aws:sqs:us-east-1:000000000000:FILA_REFUND --endpoint-url=http://localhost:4566
+
+
+==============================================================
+
+
+
+
+==== 
+Add Bibliotecas (S3, SNS, SQS)
+
+<dependency>
+    <groupId>io.awspring.cloud</groupId>
+    <artifactId>spring-cloud-starter-aws</artifactId>
+</dependency>
+<dependency>
+    <groupId>io.awspring.cloud</groupId>
+    <artifactId>spring-cloud-starter-aws-messaging</artifactId>
+</dependency>
+
+Opcionais
+<dependency>
+    <groupId>io.awspring.cloud</groupId>
+    <artifactId>spring-cloud-starter-aws-parameter-store-config</artifactId>
+</dependency>
+<dependency>
+    <groupId>io.awspring.cloud</groupId>
+    <artifactId>spring-cloud-starter-aws-secrets-manager-config</artifactId>
+</dependency>
+
+Caso ñ encontre as config busca as config no application.properties
+

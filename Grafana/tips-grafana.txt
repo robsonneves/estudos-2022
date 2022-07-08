@@ -1,0 +1,122 @@
+================== Grafana e Prometheus ================== senha = admin - admin
+
+================== Prometheus ==================
+
+Prometheus fica batendo na sua aplicacao
+Prometheus fica batendo tambem em export para bater em sistema OP. ou DB
+
+================== Grafana ==================
+
+Conecta a banco de dados
+Controle de acesso
+Interface web amigavel
+
+---
+
+PUSH
+    Aplicacao envia para o servidor
+    Aplicacao consolida dados e envia para o servidor
+PULL
+    servidor de monitoramento chama a aplicacao (Prometheus assim)
+
+aplicacao envia para --> Agregador <-- servidor pergunta para Agregador
+
+
+* Pushgateway =  Agregador
+* PromQL -> linguagem que le o grafana le o Prometheus
+* AlertManaget -> cria os elertas.
+
+
+================== Instalacao ==================
+
+docker run 
+    --name prometheus 
+    --rm
+    -d 
+    -p 9090:9090
+    -v d:\projetos\curso-prometheus\prometheus.yml:/etc/prometheus/prometheus.yaml
+        dentro desse arquivo
+        global:
+            scrape_interval: 15s 
+
+    prom/prometheus
+
+docker run --name prometheus -rm -d -p 9090:9090 prom/prometheus 
+docker container ls
+docker container stop prometheus
+docker container ls -a
+
+docker run --name prometheus -rm -d -p 9090:9090 
+-v d:\projetos\curso-prometheus\prometheus.yml:/etc/prometheus/prometheus.yaml prom/prometheus 
+
+docker container restart prometheus
+
+
+================== Ajustar aplicacao para leitura do prometheus ==================
+================== config prometheus ==================
+
+comando pra plotar os resultados
+    increase(nome_da_metrica[1m])
+    sum(increase(nome_da_metrica[1m]))
+    increase(nome_da_metrica{statusCode="200"}[1m])
+
+
+================== PromQL QUERYs ==================
+
+Tipos de dados
+    Scaler          -> valores inteiros
+    Instant vector  -> valores das series temporais no exato momento
+    Range vector    -> valores das series em um intervalo de tempo, range de tempo
+
+    count(api_request_total)
+    api_request_total
+    api_request_total[1m] / api_request_total[4m:1m]
+
+Filtrar por labels
+    api_request_total{code="200"}
+    api_request_total{code="2.."}
+    api_request_total{code!="200"}
+    api_request_total{method=~"get|post"}
+    api_request_total{method="POST", code!="200"}
+
+Contadores (olha os minutos pra tras)
+    api_request_total    
+    rate(api_request_total[1m])
+    rate(api_request_total[1m])
+
+    increase(api_request_total[1m])
+    rate(api_request_total[1m])*60 = media por segundo
+
+
+================== Grafana ==================
+
+docker run -d --name=grafana -p 3000:3000 grafana/grafana
+docker contaiiner ls
+
+--- configurar prometheus + grafana
+
+
+
+
+
+================== Ajustar aplicacao para leitura do prometheus ==================
+================== Ajustar aplicacao para leitura do prometheus ==================
+
+
+docker run --name prometheus -d -p 9090:9090 prom/prometheus 
+docker run --name=grafana -d -p 3000:3000 grafana/grafana
+
+
+docker run --name prometheus -d -p 9090:9090 -v /Users/robson.neves/Documents/DEV/Git_Hub/curso/GitHub/Grafana/prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus 
+
+/etc/prometheus/prometheus.yml
+
+Prometheus local 
+
+
+- job_name: order-status-kafka-aggregate-02
+  static_configs:
+  - targets:
+    - 192.168.1.2:8081 ///////// obs adicionar o ip da maquina
+    - 192.168.1.6:8081
+
