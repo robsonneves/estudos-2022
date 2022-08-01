@@ -36,7 +36,7 @@ Renomear o link de acesso ao WP (+ seguranca)
     WP Rename-Login
 
 
-=================== Photoshop + Elementor ===================
+=================== Photoshop + Elementor (YouTube) ===================
 
 Imagens free
     freepik
@@ -50,6 +50,23 @@ Tamanho Desktop
 
 Plugin para adicionar colunas no template
     HAPPY WIDGETS
+        Config
+            Grilayer    = true
+            Colunms     = 16
+            Max Width   = 1280
+            Gutter      = 15
+
+        Altera largura do site pra 1280px
+        Primeira fatia margin top-80 footer-80
+        Deixa 2 colunas / um pra foto outra da texto
+
+
+
+ATALHOS
+
+    CTRL+SHIFT+G = RETIRA GRID 
+
+
 
 Templates de exemplo 
         https://www.behance.net/ciparoni?tracking_source=search_users%7Cothon%20ciparoni
@@ -63,3 +80,66 @@ Mobile
     Largura 800
 
 
+
+
+==== Desenvolvendo Layout junto com youtube - https://www.youtube.com/watch?v=ew-5ySo1JuY
+
+
+Plugin para adicionar colunas no template
+    HAPPY WIDGETS
+        Config
+            Grilayer    = true
+            Colunms     = 16
+            Max Width   = 1280
+            Gutter      = 15
+
+        Altera largura do site pra 1280px
+        Primeira fatia margin top-80 footer-80
+        Deixa 2 colunas / um pra foto outra da texto
+        Add texto na primeira coluna - montserrat
+        Tira print da tela com as grids e leva pro photoshop
+        Cria arquivo no photoshop ClipBoard 1920x800
+        Tamanho do topo 1920x 695 / tablet 800px / mobile 431px 
+
+        Tratamento de IMG
+            Fazer os cortes
+            Converter em OBJ Inteligente
+            Camera Raw Filter ( SHIFT+CTRL+A )
+                Ajustes
+                    + Clarity
+                    + Texture
+                    - Blacks
+                    + Whites
+                    + Contrast (++)
+                    Temperature - Temperatura do fundo
+                Color Mixer ( muda cor, altera, tira ... )
+
+
+ATALHOS Elementor
+
+    CTRL+SHIFT+G = RETIRA GRID 
+
+ATALHOS Photoshop
+
+    SHIFT+CTRL+A = abrir camera raw filter 
+
+
+---
+
+    Fonts
+        H1 bebas pra titulo
+        texto monserra
+
+    Formulario
+        nome
+        email
+
+    Fonts mais ultilizadas
+        https://youtu.be/BqTJrOESGMM?t=7378
+    
+--- Nota na web gtmetrix.com
+
+--- Livros para ler
+        - Gatilhos mentais
+        - As armas da persuasao
+        - 48 leis do poder
